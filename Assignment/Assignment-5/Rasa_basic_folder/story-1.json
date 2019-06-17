@@ -1,0 +1,15 @@
+## Generated Story -9035110231822688304
+* greet
+    - utter_greet
+* restaurant_search
+    - utter_ask_location
+* restaurant_search{"cuisine": "south"}
+    - slot{"cuisine": "south"}
+    - utter_ask_cuisine
+* restaurant_search
+    - action_restaurant
+    - slot{"location": null}
+* goodbye
+    - utter_greet
+    - export
+
