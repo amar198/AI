@@ -67,3 +67,20 @@
 * affirm
     - utter_goodbye
     - export
+
+#-------------------------------------------------------------------------------------
+#stories added by me
+#-------------------------------------------------------------------------------------
+## Generated Story -3341068003863928273
+* greet
+    - utter_greet
+* restaurant_search
+    - utter_ask_cuisine
+* restaurant_search{"cuisine": "chinese"}
+    - slot{"cuisine": "chinese"}
+    - utter_ask_location
+* restaurant_search{"location": "pune"}
+    - slot{"location": "pune"}
+    - action_restaurant
+    - slot{"location": "pune"}
+    - utter_goodbye

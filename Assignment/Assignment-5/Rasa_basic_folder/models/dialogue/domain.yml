@@ -5,6 +5,7 @@ action_names:
 - utter_default
 - utter_ask_howcanhelp
 - utter_ask_location
+- utter_ask_budget
 - utter_ask_cuisine
 - action_restaurant
 actions:
@@ -13,6 +14,7 @@ actions:
 - utter_default
 - utter_ask_howcanhelp
 - utter_ask_location
+- utter_ask_budget
 - utter_ask_cuisine
 - actions.ActionSearchRestaurants
 config:
@@ -20,6 +22,8 @@ config:
 entities:
 - location
 - cuisine
+- budget
+- email
 intents:
 - greet
 - affirm
@@ -27,20 +31,40 @@ intents:
 - goodbye
 - thankyou
 - restaurant_search
+- info_in_email
 slots:
+  budget:
+    initial_value: null
+    type: rasa_core.slots.TextSlot
   cuisine:
+    initial_value: null
+    type: rasa_core.slots.TextSlot
+  email:
     initial_value: null
     type: rasa_core.slots.TextSlot
   location:
     initial_value: null
     type: rasa_core.slots.TextSlot
 templates:
+  utter_ask_budget:
+  - buttons:
+    - payload: Lesser than Rs. 300
+      title: Lesser than Rs. 300
+    - payload: Rs. 300 to 700
+      title: Rs. 300 to 700
+    - payload: More than 700
+      title: More than 700
+    text: What price range are you looking at?
   utter_ask_cuisine:
   - buttons:
     - payload: Chinese
       title: Chinese
+    - payload: Mexican
+      title: Mexican
     - payload: Italian
       title: Italian
+    - payload: American
+      title: American
     - payload: South Indian
       title: South Indian
     - payload: North Indian
@@ -53,7 +77,7 @@ templates:
   utter_default:
   - text: default message
   utter_goodbye:
-  - text: goodbye :(
+  - text: goodbye!! have a good day!!
   - text: Bye-bye
   utter_greet:
   - text: hey there! How may i help you

@@ -1,0 +1,15 @@
+## Generated Story 568070755197951105
+* greet
+    - utter_greet
+* restaurant_search
+    - utter_ask_cuisine
+* restaurant_search{"cuisine": "chinese"}
+    - slot{"cuisine": "chinese"}
+    - utter_ask_location
+* restaurant_search{"location": "pune"}
+    - slot{"location": "pune"}
+    - utter_ask_budget
+* restaurant_search
+    - action_restaurant
+    - export
+
