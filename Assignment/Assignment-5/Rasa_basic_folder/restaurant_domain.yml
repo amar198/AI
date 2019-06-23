@@ -58,25 +58,25 @@ templates:
       - title: "North Indian"
         payload: "North Indian"
 # adding additional templates as per requirements
-  utter_ask_budget:
-    - text: "What price range are you looking at?"
-      buttons:
-      - title: "Lesser than Rs. 300"
-        payload: "Lesser than Rs. 300"
-      - title: "Rs. 300 to 700"
-        payload: "Rs. 300 to 700"
-      - title: "More than 700"
-        payload: "More than 700"
-  utter_if_details_required_in_email:
-    - Would you like this details on your email id?
-    - Would you like me to send this details on your email id?
-  utter_ask_email_id:
-    - Please provide your email id
-    - Request you to kindly share your email id
-    - Please share your email id where I should send the details on
-  utter_invalid_email_id:
-    - Your email id does not seem right. Please share a correct email id.
-    - Invalid email id. Please share a correct email id.
+#  utter_ask_budget:
+#    - text: "What price range are you looking at?"
+#      buttons:
+#      - title: "Lesser than Rs. 300"
+#        payload: "Lesser than Rs. 300"
+#      - title: "Rs. 300 to 700"
+#        payload: "Rs. 300 to 700"
+#      - title: "More than 700"
+#        payload: "More than 700"
+#  utter_if_details_required_in_email:
+#    - Would you like this details on your email id?
+#    - Would you like me to send this details on your email id?
+#  utter_ask_email_id:
+#    - Please provide your email id
+#    - Request you to kindly share your email id
+#    - Please share your email id where I should send the details on
+#  utter_invalid_email_id:
+#    - Your email id does not seem right. Please share a correct email id.
+#    - Invalid email id. Please share a correct email id.
 
 actions:
 - utter_greet
@@ -84,10 +84,11 @@ actions:
 - utter_default
 - utter_ask_howcanhelp
 - utter_ask_location
-#- actions.ActionCheckCity
+#- actions.CityCheck
 - utter_ask_cuisine
-- utter_ask_budget
+#- utter_ask_budget
 - actions.ActionSearchRestaurants
-- utter_if_details_required_in_email
-- utter_ask_email_id
-- utter_invalid_email_id
+#- utter_if_details_required_in_email
+#- utter_ask_email_id
+#- actions.CheckEmailFormat
+#- utter_invalid_email_id
