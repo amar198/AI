@@ -5,16 +5,28 @@ action_names:
 - utter_default
 - utter_ask_howcanhelp
 - utter_ask_location
+- city_check
 - utter_ask_cuisine
+- utter_ask_budget
 - action_restaurant
+- utter_if_details_required_in_email
+- utter_ask_email_id
+- email_check
+- send_email
 actions:
 - utter_greet
 - utter_goodbye
 - utter_default
 - utter_ask_howcanhelp
 - utter_ask_location
+- actions.CityCheck
 - utter_ask_cuisine
+- utter_ask_budget
 - actions.ActionSearchRestaurants
+- utter_if_details_required_in_email
+- utter_ask_email_id
+- actions.CheckEmailFormat
+- actions.SendEmail
 config:
   store_entities_as_slots: true
 entities:
@@ -44,6 +56,15 @@ slots:
     initial_value: null
     type: rasa_core.slots.TextSlot
 templates:
+  utter_ask_budget:
+  - buttons:
+    - payload: Lesser than Rs. 300
+      title: Lesser than Rs. 300
+    - payload: Rs. 300 to 700
+      title: Rs. 300 to 700
+    - payload: More than 700
+      title: More than 700
+    text: What price range are you looking at?
   utter_ask_cuisine:
   - buttons:
     - payload: Chinese
@@ -59,6 +80,10 @@ templates:
     - payload: North Indian
       title: North Indian
     text: what kind of cuisine would you like?
+  utter_ask_email_id:
+  - text: Please provide your email id
+  - text: Request you to kindly share your email id
+  - text: Please share your email id where I should send the details on
   utter_ask_howcanhelp:
   - text: how can I help you?
   utter_ask_location:
@@ -72,3 +97,9 @@ templates:
   - text: hey there! How may i help you
   - text: Hi, How can I help you!
   - text: Hey, How is it going. How May I help you Today
+  utter_if_details_required_in_email:
+  - text: Would you like this details on your email id?
+  - text: Would you like me to send this details on your email id?
+  utter_invalid_email_id:
+  - text: Your email id does not seem right. Please share a correct email id.
+  - text: Invalid email id. Please share a correct email id.

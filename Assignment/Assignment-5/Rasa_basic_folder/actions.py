@@ -46,8 +46,7 @@ class ActionSearchRestaurants(Action):	#This name is given in domain file.
 		lat=d1['location_suggestions'][0]['latitude']
 		lon=d1['location_suggestions'][0]['longitude']
 
-		#TODO: understand why cuisine is sent this way, because the response does not contain any such parameter.   --DONE
-		# Updated the dictionary parameter with the required values.
+		# Updating the dictionary parameter with the required values.
 		cuisines_dict={'american':1, 'chinese':25, 'italian':55, 'north indian':50, 'mexican':73, 'south indian':85}
 
 		# Updated the restaurant_search function in the zomatopy.py file to sort the restaurants in descending order of its rating.
@@ -136,9 +135,9 @@ class ActionSearchRestaurants(Action):	#This name is given in domain file.
 		#f.close
 		#-----------------------------------------------
 		
-		return [SlotSet('location',loc)]
+		return [SlotSet('location', loc)]
 
-#--------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------
 # TODO 3: Add action for checking if the city belongs to Tier-1 or Tier-2 city.		--Aadhya will do.
 class CityCheck(Action):
 	def name(self):
@@ -155,12 +154,13 @@ class CityCheck(Action):
 		#if no records found then send message to the use else nothing
 		if len(pd_city_name) == 0:
 			dispatcher.utter_message('We do not operate in this city yet.')
+			slot_city_name = ''		# clearing the city name as it's invalid.
 
 		#setting the location slot with the value provided by the user.
-		return [SlotSet('location',slot_city_name)]
+		return [SlotSet('location', slot_city_name)]
 
 
-#--------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------
 # TODO 4: Add action for checking if the mail id provided is correct or not.		--Amar will do.
 class CheckEmailFormat(Action):
 	def name(self):
@@ -176,10 +176,20 @@ class CheckEmailFormat(Action):
 
 		if match == None:
 			dispatcher.utter_message('Invalid email id. Please provide a valid email id.')
+			slot_email = ''		#clearing the email id as it's invalid.
 
 		return [SlotSet('email', slot_email)]
 
-
-#--------------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------------------------------
 # TODO 5: Add action for sending mail.												--Sasi will do.
 
+class SendEmail(Action):
+	def name(self):
+		return 'send_email'
+
+	def run(self, dispatcher, tracker, domain):
+		email_id = tracker.get_slot('email')
+		# code to send email.
+		dispatcher.utter_message('email sent')
+
+		return [SlotSet('email', email_id)]

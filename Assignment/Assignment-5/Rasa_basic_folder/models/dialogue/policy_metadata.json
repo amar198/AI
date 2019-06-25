@@ -6,18 +6,18 @@
         "cuisine"
       ]
     },
+    "utter_goodbye": {
+      "slots": []
+    },
     "action_restaurant": {
       "slots": [
         "location"
       ]
-    },
-    "utter_goodbye": {
-      "slots": []
     }
   },
   "rasa_core": "0.10.1",
   "max_histories": [
-    5,
+    4,
     5
   ],
   "ensemble_name": "rasa_core.policies.ensemble.SimplePolicyEnsemble",
