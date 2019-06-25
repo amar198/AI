@@ -3,7 +3,9 @@ import ast
 
 base_url = "https://developers.zomato.com/api/v2.1/"
 
-
+# why is this function defined here like this?
+# is this the way singleton pattern implemented in python?? 
+# TODO: study design patterns in python.
 def initialize_app(config):
     return Zomato(config)
 
@@ -12,7 +14,23 @@ class Zomato:
     def __init__(self, config):
         self.user_key = config["user_key"]
 
-
+    #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # Updating this function to sort the restaurants in descending order
+    def restaurant_search(self, query="", latitude="", longitude="", cuisines="", sort_by="", order_type="", limit=5):
+        """
+        Takes either query, latitude and longitude or cuisine as input.
+        Returns a list of Restaurant IDs.
+        """
+        cuisines = "%2C".join(cuisines.split(","))
+        if str(limit).isalpha() == True:
+            raise ValueError('LimitNotInteger')
+        headers = {'Accept': 'application/json', 'user-key': self.user_key}
+        
+        r = (requests.get(base_url + "search?q=" + str(query) + "&count=" + str(limit) + "&lat=" + str(latitude) + "&lon=" + str(longitude) + "&cuisines=" + str(cuisines) + "&sort=" + str(sort_by) + "&order=" + str(order_type), headers=headers).content).decode("utf-8")
+        #r = (requests.get(base_url + "search?q=" + str(query) + "&lat=" + str(latitude) + "&lon=" + str(longitude) + "&cuisines=" + str(cuisines) + "&sort=" + str(sort_by) + "&order=" + str(order_type), headers=headers).content).decode("utf-8")
+        return r #a = ast.literal_eval(r)
+    #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
     def get_categories(self):
         """
         Takes no input.
@@ -214,20 +232,6 @@ class Zomato:
 
         restaurant_details = DotDict(restaurant_details)
         return restaurant_details
-
-
-    def restaurant_search(self, query="", latitude="", longitude="", cuisines="", limit=5):
-        """
-        Takes either query, latitude and longitude or cuisine as input.
-        Returns a list of Restaurant IDs.
-        """
-        cuisines = "%2C".join(cuisines.split(","))
-        if str(limit).isalpha() == True:
-            raise ValueError('LimitNotInteger')
-        headers = {'Accept': 'application/json', 'user-key': self.user_key}
-        r = (requests.get(base_url + "search?q=" + str(query) + "&count=" + str(limit) + "&lat=" + str(latitude) + "&lon=" + str(longitude) + "&cuisines=" + str(cuisines), headers=headers).content).decode("utf-8")
-        return r#a = ast.literal_eval(r)
-
 
     def get_location(self, query="", limit=5):
         """

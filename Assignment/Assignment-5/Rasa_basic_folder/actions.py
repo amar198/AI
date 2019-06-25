@@ -9,61 +9,124 @@ import json
 import pandas as pd		# for checking the city names
 import re 				# for checking email format
 
+# Declaring this as global variable so that it can be used in different classes
+email_response = ''		#variable used for showing email response
+
 #Action class is the parent class. Inheritance.
 class ActionSearchRestaurants(Action):	#This name is given in domain file.
 	def name(self):
 		return 'action_restaurant'	#This is the name which is given in the stories file.
 		
 	def run(self, dispatcher, tracker, domain):
+		#-------------------------------------------------------------------------------------------------------------------------------
+		# variable used for tracking the state of the request, which will help in showing a correct message to the user
+		request_state = ''
+
+		# Variable used for counting 5 and 10 restaurants for chat and email respectively.
+		iChatResponse = 0
+		iEmailResponse = 0
+
+		# variables used for storing restaurants output
+		chat_response = ''
+		email_response = ''
+		#-------------------------------------------------------------------------------------------------------------------------------
+
 		config={ 'user_key':'f8e764632db822d8f7cac3254c5f8af3'}
 		zomato = zomatopy.initialize_app(config)
-		loc = tracker.get_slot('location')
+
+		# fetching user preference
+		loc 	= tracker.get_slot('location')
 		cuisine = tracker.get_slot('cuisine')
+		#budget 	= tracker.get_slot('budget')
+		budget='low'
+
+		# getting lat/lon for the city which user has entered
 		location_detail=zomato.get_location(loc, 1)
 		d1 = json.loads(location_detail)
-		mlat=d1['location_suggestions'][0]['latitude']
-		mlon=d1['location_suggestions'][0]['longitude']
+		lat=d1['location_suggestions'][0]['latitude']
+		lon=d1['location_suggestions'][0]['longitude']
 
-		#TODO: understand why cuisine is sent this way, because the response does not contain any such dictionary
-		cuisines_dict={'bakery':5,'chinese':25,'cafe':30,'italian':55,'biryani':7,'north indian':50,'south indian':85}
+		#TODO: understand why cuisine is sent this way, because the response does not contain any such parameter.   --DONE
+		# Updated the dictionary parameter with the required values.
+		cuisines_dict={'american':1, 'chinese':25, 'italian':55, 'north indian':50, 'mexican':73, 'south indian':85}
 
-		# The last parameter indicates that we are looking for top 10 results.
-		results=zomato.restaurant_search('', mlat, mlon, str(cuisines_dict.get(cuisine)), 10)
-		# results=zomato.restaurant_search(query='', lat=mlat, lon=mlon, cuisine=str(cuisines_dict.get(cuisine)), limit=10)
+		# Updated the restaurant_search function in the zomatopy.py file to sort the restaurants in descending order of its rating.
+		# Added 2 more parameters to this function to accept the field on which sorting needs to be done. As per documentation
+		# @ https://developers.zomato.com/documentation for /search function, we can pass cost, rating, and real_distance field in
+		# sort parameter, and asc, desc in the order field.
+		# The last parameter indicates that we are looking for 20 records.
+		results=zomato.restaurant_search('', lat, lon, str(cuisines_dict.get(cuisine)), 'rating', 'desc', 20)
+
+		# loading the results as JSON object
 		d = json.loads(results)
 
-		iChatResponse=0 #Variable used for counting 5 restaurants. To show in the chat. For email all 10 responses will be sent.
-
-		chat_response=''		#variable used for showing chat response
-		email_response=''		#variable used for showing email response
-		zpy_response=[[]*2] 	#variable to capture response from Zomato API, using a 2 dimensional list.
-								#column 1 will store the response, and 2 will store the rating. Will use this column for sorting.
-		row, column = 0
-
-		# TODO 1: Add code for sorting restaurant output as per rating (descending)
+		# NOTE: Sorting restaurants in descending order will be done in the restaurant_search function in the zomatopy.py file.
+		# Here will sort the response as per budget
 		if d['results_found'] == 0:
 			chat_response 	= 'We do not operate in this city yet'
 			email_response 	= 'no results found'
-			zpy_response 	= 'We do not operate in this city yet'
+			request_state  	= 'no results found'
+
 		else:
 			for restaurant in d['restaurants']:
-				#
-				if iChatResponse <5:
-					chat_response=chat_response + 'Found ' + restaurant['restaurant']['name'] + ' in ' + restaurant['restaurant']['location']['address'] + ' has been rated ' + restaurant['restaurant']['user_rating']['aggregate_rating'] + '\n'
-					iChatResponse = iChatResponse+1
-				
-				email_response=email_response + 'Found ' + restaurant['restaurant']['name'] + ' in ' + restaurant['restaurant']['location']['address'] + ' has been rated ' + restaurant['restaurant']['user_rating']['aggregate_rating'] + '\n'
+				request_state = 'results found'
 
-				#TODO: update below code as it is not in correct python syntax.
-				#TODO: study basic python syntax... pathetic amar pathetic...
-				#storing the restaurant name and rating in the zpy_response variable.
-				#zpy_response[row][column] = 'Found ' + restaurant['restaurant']['name'] + ' in ' + restaurant['restaurant']['location']['address'] + ' has been rated ' + restaurant['restaurant']['user_rating']['aggregate_rating']
-				#column=column+1
-				#zpy_response[row][column] = restaurant['restaurant']['user_rating']['aggregate_rating']
-				#row=row+1
-				
-		#sortRestRatingWise(zpy_response)
+				# fetching average cost of 2 ppl and parsing it into an integer
+				cost4_2ppl = int(restaurant['restaurant']['average_cost_for_two'])
+
+				# NOTE REFACTOR: lot of repeating code. Need to refactor.
+				if (budget == 'low' and cost4_2ppl < 300):
+					if iChatResponse < 5:
+						iChatResponse += 1
+
+						chat_response = chat_response + restaurant['restaurant']['name'] + ' in ' + \
+							restaurant['restaurant']['location']['address'] + ' has been rated ' + \
+							restaurant['restaurant']['user_rating']['aggregate_rating'] + '\n'
+
+					if iEmailResponse < 10:
+						iEmailResponse += 1
+
+						email_response = email_response + restaurant['restaurant']['name'] + ' in ' + \
+							restaurant['restaurant']['location']['address'] + ' has been rated ' + \
+							restaurant['restaurant']['user_rating']['aggregate_rating'] + '\n'
+
+				elif (budget == 'medium' and (cost4_2ppl > 300 and cost4_2ppl < 700)):
+					if iChatResponse < 5:
+						iChatResponse += 1
+
+						chat_response = chat_response + restaurant['restaurant']['name'] + ' in ' + \
+							restaurant['restaurant']['location']['address'] + ' has been rated ' + \
+							restaurant['restaurant']['user_rating']['aggregate_rating'] + '\n'
+
+					if iEmailResponse < 10:
+						iEmailResponse += 1
+
+						email_response = email_response + restaurant['restaurant']['name'] + ' in ' + \
+							restaurant['restaurant']['location']['address'] + ' has been rated ' + \
+							restaurant['restaurant']['user_rating']['aggregate_rating'] + '\n'
+
+				elif (budget == 'high' and cost4_2ppl > 700):
+					if iChatResponse < 5:
+						iChatResponse += 1
+
+						chat_response = chat_response + restaurant['restaurant']['name'] + ' in ' + \
+							restaurant['restaurant']['location']['address'] + ' has been rated ' + \
+							restaurant['restaurant']['user_rating']['aggregate_rating'] + '\n'
+
+					if iEmailResponse < 10:
+						iEmailResponse += 1
+
+						email_response = email_response + restaurant['restaurant']['name'] + ' in ' + \
+							restaurant['restaurant']['location']['address'] + ' has been rated ' + \
+							restaurant['restaurant']['user_rating']['aggregate_rating'] + '\n'
 		
+		# if below condition is satisfied, it would mean that restaurant's data was found but not in the required budget
+		if (request_state == 'results found' and chat_response == ''):
+			chat_response = 'No restaurants found in the given budget.'
+
+		elif request_state == 'no results found':
+			chat_response = 'No restaurants found for the given cousine and city.'
+
 		dispatcher.utter_message('-----'+chat_response)
 
 		#TODO 2: Remove this code before submission
@@ -74,16 +137,6 @@ class ActionSearchRestaurants(Action):	#This name is given in domain file.
 		#-----------------------------------------------
 		
 		return [SlotSet('location',loc)]
-	
-	
-	#def sortRestRatingWise(chatResponse):		--Amar to do
-		#TODO: check how to create a 2D array in python and assign values in different cells.
-		#tempStr = [[]*2]
-		#
-		#for i in range(10):
-		#
-		#return chatResponse
-
 
 #--------------------------------------------------------------------------------------------------------------------------
 # TODO 3: Add action for checking if the city belongs to Tier-1 or Tier-2 city.		--Aadhya will do.
