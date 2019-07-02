@@ -8,6 +8,7 @@ action_names:
 - city_check
 - utter_ask_cuisine
 - utter_ask_budget
+- utter_ask_number_of_people
 - action_restaurant
 - utter_if_details_required_in_email
 - utter_ask_email_id
@@ -22,6 +23,7 @@ actions:
 - actions.CityCheck
 - utter_ask_cuisine
 - utter_ask_budget
+- utter_ask_number_of_people
 - actions.ActionSearchRestaurants
 - utter_if_details_required_in_email
 - utter_ask_email_id
@@ -50,6 +52,9 @@ slots:
     initial_value: null
     type: rasa_core.slots.TextSlot
   email:
+    initial_value: null
+    type: rasa_core.slots.TextSlot
+  email_response:
     initial_value: null
     type: rasa_core.slots.TextSlot
   location:
@@ -84,10 +89,15 @@ templates:
   - text: Please provide your email id
   - text: Request you to kindly share your email id
   - text: Please share your email id where I should send the details on
+  - text: On which email id should I send the details on
   utter_ask_howcanhelp:
   - text: how can I help you?
   utter_ask_location:
   - text: In what location?
+  utter_ask_number_of_people:
+  - text: for how many people?
+  - text: for how many people are you looking for?
+  - text: how many people are planning to accompany you?
   utter_default:
   - text: default message
   utter_goodbye:
@@ -100,6 +110,3 @@ templates:
   utter_if_details_required_in_email:
   - text: Would you like this details on your email id?
   - text: Would you like me to send this details on your email id?
-  utter_invalid_email_id:
-  - text: Your email id does not seem right. Please share a correct email id.
-  - text: Invalid email id. Please share a correct email id.

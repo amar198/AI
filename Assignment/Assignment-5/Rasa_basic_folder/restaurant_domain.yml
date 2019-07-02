@@ -8,6 +8,8 @@ slots:
     type: text
   email:
     type: text
+  email_response:
+    type: text
 
 # Added 2 more entities for budget & email
 entities:
@@ -67,6 +69,10 @@ templates:
         payload: "Rs. 300 to 700"
       - title: "More than 700"
         payload: "More than 700"
+  utter_ask_number_of_people:
+    - for how many people?
+    - for how many people are you looking for?
+    - how many people are planning to accompany you?
   utter_if_details_required_in_email:
     - Would you like this details on your email id?
     - Would you like me to send this details on your email id?
@@ -74,9 +80,7 @@ templates:
     - Please provide your email id
     - Request you to kindly share your email id
     - Please share your email id where I should send the details on
-  utter_invalid_email_id:
-    - Your email id does not seem right. Please share a correct email id.
-    - Invalid email id. Please share a correct email id.
+    - On which email id should I send the details on
 
 actions:
 - utter_greet
@@ -87,6 +91,7 @@ actions:
 - actions.CityCheck
 - utter_ask_cuisine
 - utter_ask_budget
+- utter_ask_number_of_people
 - actions.ActionSearchRestaurants
 - utter_if_details_required_in_email
 - utter_ask_email_id
